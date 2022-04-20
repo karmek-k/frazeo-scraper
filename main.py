@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 
 
 def fetch_soup(url):
-    res = requests.get(index_url)
+    res = requests.get(url)
 
     if res.status_code != 200:
         print(f'Could not download the page, code: {res.status_code}')
