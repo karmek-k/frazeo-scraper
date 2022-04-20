@@ -16,13 +16,23 @@ def fetch_soup(url):
     return BeautifulSoup(res.text, 'lxml')
 
 
+def add_to_results(results, phrase, meanings):
+    results.append({
+        'phrase': phrase,
+        'meanings': meanings
+    })
+
+
 base_url = 'https://pl.wiktionary.org'
 index_url = base_url + '/wiki/Indeks:Polski_-_Zwi%C4%85zki_frazeologiczne'
 
 results = []
 
 for link in fetch_soup(index_url).select('.mw-parser-output ul li a'):
-    if link.get('href').endswith('(strona nie istnieje)'):
+    phrase = link.get_text()
+
+    if link.get('title').endswith('(strona nie istnieje)'):
+        add_to_results(results, phrase, None)
         continue
 
     meanings = []
@@ -33,13 +43,17 @@ for link in fetch_soup(index_url).select('.mw-parser-output ul li a'):
 
     try:
         for meaning in meaning_section[2].find_all('dd'):
-            meaning_text = re.sub(r'\(\d+\.\d+\) ', '', meaning.get_text())
+            # delete (1.1), [1]
+            meaning_text = re.sub(
+                r'(\[\d+\]|\(\d+\.\d+\) )', '', meaning.get_text())
             meanings.append(meaning_text)
     except IndexError:
         print(f'Warning - {link.text} has no meanings section')
         continue
 
-    results.append({
-        'phrase': link.get_text(),
-        'meanings': meanings
-    })
+    print(f'Scraped "{phrase}"')
+    add_to_results(results, phrase, meanings)
+
+
+with open('output.json', 'w', encoding='utf-8') as f:
+    json.dump(results, f)
