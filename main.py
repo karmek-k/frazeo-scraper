@@ -1,5 +1,4 @@
 import sys
-import re
 
 import requests
 from bs4 import BeautifulSoup
@@ -19,5 +18,5 @@ base_url = 'https://pl.wiktionary.org'
 index_url = base_url + '/wiki/Indeks:Polski_-_Zwi%C4%85zki_frazeologiczne'
 
 
-for link in fetch_soup('index_url').select('.mw-parser-output ul li a'):
+for link in fetch_soup(index_url).select('.mw-parser-output ul li a'):
     print(link.text)
