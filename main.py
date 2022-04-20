@@ -56,4 +56,4 @@ for link in fetch_soup(index_url).select('.mw-parser-output ul li a'):
 
 
 with open('output.json', 'w', encoding='utf-8') as f:
-    json.dump(results, f)
+    json.dump(results, f, ensure_ascii=False)
